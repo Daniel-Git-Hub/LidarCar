@@ -41,7 +41,9 @@
 		<param name="clearing_rotation_allowed" value="false" /> <!-- Our carlike robot is not able to rotate in place -->
 	</node>
 
-	<node pkg="gmapping"   type="slam_gmapping" />
+	<node pkg="gmapping" type="slam_gmapping" >
+		<param name="temporalUpdate" value="1.0" />
+	</node>
 
 	<node pkg="lidarcar" type="move_robot_node" />
 

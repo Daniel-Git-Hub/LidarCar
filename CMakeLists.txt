@@ -137,7 +137,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/*.cpp)
-add_executable(${PROJECT_NAME}_node src/move_robot_node/move_robot_node.cpp src/move_robot_node/car_motor.cpp)
+add_executable(move_robot_node src/move_robot_node/move_robot_node.cpp src/move_robot_node/car_motor.cpp)
 add_executable(imu_robot_node src/imu_robot_node/imu_robot_node.cpp src/imu_robot_node/imu.cpp)
 
 ## Rename C++ executable without prefix
@@ -148,11 +148,11 @@ add_executable(imu_robot_node src/imu_robot_node/imu_robot_node.cpp src/imu_robo
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(move_robot_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(imu_robot_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_node
+target_link_libraries(move_robot_node
   ${catkin_LIBRARIES}
   pigpiod_if2
 )
