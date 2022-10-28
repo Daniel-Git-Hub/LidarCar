@@ -6,8 +6,8 @@
 #include <math.h>
 
 #define MOTOR_ENABLE 16
-#define MOTOR_P 20
-#define MOTOR_M 21
+#define MOTOR_P 21
+#define MOTOR_M 20
 // #define MOTOR_IN_RANGE 255 //from -255 to 255
 
 #define MAX_SPEED_IN 10.0
@@ -31,7 +31,7 @@ int car_init(int p){
     set_mode(pigPio, SERVO_PIN, PI_OUTPUT);
     gpio_write(pigPio, MOTOR_ENABLE, 0);
     set_servo_pulsewidth(pigPio, SERVO_PIN, SERVO_MID);
-    set_PWM_frequency(MOTOR_ENABLE, MOTOR_ENABLE, 10);
+    set_PWM_frequency(pigPio, MOTOR_ENABLE, 10);
     return 0;
 }
 
@@ -44,12 +44,14 @@ int car_move(double speedDouble){
     }
     
     int reverse = speedDouble > 0;
-    if(!reverse){
-        speedDouble = speedDouble*2/3;
-    }
+    speedDouble = abs(speedDouble);
+
+    // if(!reverse){
+    //     speedDouble = speedDouble*2/3;
+    // }
 
     int speed = (int)round(speedDouble * 255 / MAX_SPEED_IN);
-    printf("Speed %d\n", speed);
+    // printf("Speed %d\n", speed);
     if(speed < MIN_PWM){
         speed = MIN_PWM;
     }

@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
+#include <sensor_msgs/Imu.h>
 
 #include "std_msgs/String.h"
 
@@ -11,6 +12,9 @@
 #include <unistd.h>
 #include <pigpiod_if2.h>
 #include "imu.h"
+#include "comp.h"
+
+
 
 typedef struct {
     double velHeading;
@@ -29,15 +33,16 @@ ros::Duration waitTime(0, 1000*1000*500);
 
 odom_data_t currentOdom = { 0 };
 
+
 int main(int argc, char *argv[])
 {
     printf("Start\n");
     ROS_INFO("Start ROS\n");
     ros::init(argc, argv, "imu_robot_node");
 
-    ros::NodeHandle n("~/");
+    ros::NodeHandle n;
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
-    tf::TransformBroadcaster odom_broadcaster;
+    // tf::TransformBroadcaster odom_broadcaster;
 
 
     ROS_INFO("IMU Init\n");
@@ -61,12 +66,20 @@ int main(int argc, char *argv[])
         
         
         imu_reading_t * reading = imu_read();
+
         ros::Duration deltaTime = (ros::Time::now() - currentTime);
         currentTime = ros::Time::now();
+        // comp_calc(deltaTime.toSec(), reading);
 
-        currentOdom.velHeading = reading->tranGyroZ;
-        currentOdom.posHeading += currentOdom.velHeading*deltaTime.toSec();
+        // currentOdom.velHeading = (1-GAIN_VEL_H)*currentOdom.velHeading + GAIN_VEL_H*reading->tranGyroZ;
+        currentOdom.velHeading += reading->tranGyroZ;
+
+        // currentOdom.posHeading = (1-GAIN_POS_H)*currentOdom.posHeading + GAIN_POS_H*currentOdom.velHeading*deltaTime.toSec();
+        currentOdom.posHeading = currentOdom.velHeading*deltaTime.toSec();
+
         
+        // currentOdom.velX = (1-GAIN_VEL_XY)*currentOdom.velX + GAIN_VEL_XY*deltaTime.toSec()*reading->tranAccelX;
+        // currentOdom.velY = (1-GAIN_VEL_XY)*currentOdom.velX + GAIN_VEL_XY*deltaTime.toSec()*reading->tranAccelY;        
         currentOdom.velX += deltaTime.toSec()*reading->tranAccelX; 
         currentOdom.velY += deltaTime.toSec()*reading->tranAccelY; 
 
@@ -74,28 +87,29 @@ int main(int argc, char *argv[])
         currentOdom.posY += sin(currentOdom.posHeading)*deltaTime.toSec()*currentOdom.velX + cos(currentOdom.posHeading)*deltaTime.toSec()*currentOdom.velY; 
 
         
-
         if((ros::Time::now() - lastTime) > waitTime) {
             lastTime = ros::Time::now();
             // imu_print(0);
 
             // printf("%le, %lf, %lf, %lf, %lf, %lf, %lf\n", deltaTime.toSec(), currentOdom.velHeading, currentOdom.posHeading, currentOdom.velX, currentOdom.velY, currentOdom.posX, currentOdom.posY);
 
+            // geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(currentOdom.posHeading);
+            geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(0);
 
-            geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(currentOdom.posHeading);
+            // geometry_msgs::TransformStamped odom_trans;
+            // odom_trans.header.stamp = currentTime;
+            // odom_trans.header.frame_id = "odom";
+            // odom_trans.child_frame_id = "base_link";
 
-            geometry_msgs::TransformStamped odom_trans;
-            odom_trans.header.stamp = currentTime;
-            odom_trans.header.frame_id = "odom";
-            odom_trans.child_frame_id = "base_link";
-
-            odom_trans.transform.translation.x = currentOdom.posX;
-            odom_trans.transform.translation.y = currentOdom.posY;
-            odom_trans.transform.translation.z = 0.0;
-            odom_trans.transform.rotation = odom_quat;
+            // odom_trans.transform.translation.x = 0;
+            // // odom_trans.transform.translation.x = currentOdom.posX;
+            // odom_trans.transform.translation.y = 0;
+            // // odom_trans.transform.translation.y = currentOdom.posY;
+            // odom_trans.transform.translation.z = 0.0;
+            // odom_trans.transform.rotation = odom_quat;
 
             //send the transform
-            odom_broadcaster.sendTransform(odom_trans);
+            // odom_broadcaster.sendTransform(odom_trans);
 
             //next, we'll publish the odometry message over ROS
             nav_msgs::Odometry odom;
@@ -103,8 +117,10 @@ int main(int argc, char *argv[])
             odom.header.frame_id = "odom";
 
             //set the position
-            odom.pose.pose.position.x = currentOdom.posX;
-            odom.pose.pose.position.y = currentOdom.posY;
+            // odom.pose.pose.position.x = currentOdom.posX;
+            odom.pose.pose.position.x = 0;
+            // odom.pose.pose.position.y = currentOdom.posY;
+            odom.pose.pose.position.y = 0;
             odom.pose.pose.position.z = 0.0;
             odom.pose.pose.orientation = odom_quat;
 
@@ -116,9 +132,7 @@ int main(int argc, char *argv[])
 
             //publish the message
             odom_pub.publish(odom);
-
-
-
+            // comp_print();
         }
         ros::spinOnce();
     }    

@@ -129,9 +129,9 @@ int imu_calibrate(int count){
     
     memcpy(&calibrateReading, &temp, sizeof(imu_reading_t));
 
-    calibrateReading.tranAccelX /= count;
-    calibrateReading.tranAccelY /= count;
-    calibrateReading.tranAccelZ /= count;
+    // calibrateReading.tranAccelX /= count;
+    // calibrateReading.tranAccelY /= count;
+    // calibrateReading.tranAccelZ /= count;
 
     calibrateReading.tranGyroX  /= count;
     calibrateReading.tranGyroY  /= count;

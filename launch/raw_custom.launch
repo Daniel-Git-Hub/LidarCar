@@ -9,18 +9,12 @@
  -->
 <launch>
 
-	<!--  ************** Global Parameters ***************  -->
-	<!-- <param name="/use_sim_time" value="true"/> -->
-
-        <!--  ************** Stage Simulator ***************  -->
-	<!-- <node pkg="stage_ros" type="stageros" name="stageros" args="$(find lidarcar)/stage/maze_carlike.world">
-		<remap from="base_scan" to="scan"/>
-  	</node> -->
 
 	<node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0.1 0 0 0 0 0 base_link laser_frame 100" />
+	<node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 odom base_link 100" />
 
-	<node pkg="rplidar_ros" type="rplidarNode"/>
-	<node pkg="lidarcar"  type="imu_robot_node" />
+	<node pkg="rplidar_ros" type="rplidarNode" name="rplidarNode"/>
+	<node pkg="lidarcar"  type="imu_robot_node" name="imu_robot_node" />
 
         <!--  ************** Navigation ***************  -->
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -41,12 +35,17 @@
 		<param name="clearing_rotation_allowed" value="false" /> <!-- Our carlike robot is not able to rotate in place -->
 	</node>
 
-	<node pkg="gmapping"   type="slam_gmapping" />
+	<node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" >
+		<param name="map_frame" value="map" />
+		<param name="laser_min_dist" value="0" />
+		<param name="laser_max_dist " value="10" />
+	</node>
+	<!-- <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" >
+		<param name="temporalUpdate" value="0.1" />
+		<param name="maxRange" value="13.0" />
+		<param name="maxUrange" value="10.0" />
+	</node> -->
 
-	<node pkg="lidarcar" type="move_robot_node" />
-
-
-	  <!--  **************** Visualisation ****************  -->
-	  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find lidarcar)/cfg/rviz_navigation.rviz"/>
+	<node pkg="lidarcar" type="move_robot_node" name="move_robot_node" />
 
 </launch>

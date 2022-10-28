@@ -138,7 +138,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/*.cpp)
 add_executable(move_robot_node src/move_robot_node/move_robot_node.cpp src/move_robot_node/car_motor.cpp)
-add_executable(imu_robot_node src/imu_robot_node/imu_robot_node.cpp src/imu_robot_node/imu.cpp)
+add_executable(imu_robot_node src/imu_robot_node/imu_robot_node.cpp src/imu_robot_node/imu.cpp src/imu_robot_node/comp.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

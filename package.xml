@@ -67,12 +67,15 @@
   <exec_depend>tf</exec_depend>
 
     
-  <exec_depend>teb_local_planner</exec_depend>
-  <exec_depend>move_base</exec_depend>
-  <exec_depend>gmapping</exec_depend>
+  <depend>teb_local_planner</depend>
+  <depend>move_base</depend>
+  <depend>gmapping</depend>
+  <depend>hector_mapping</depend>
+  <depend>navigation </depend>
   <!-- <exec_depend>tf</exec_depend> -->
-  <exec_depend>rplidar_ros</exec_depend>
-
+  <depend>rplidar_ros</depend>
+  <depend>laser_scan_matcher</depend>
+  <depend>sensor_msgs</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
