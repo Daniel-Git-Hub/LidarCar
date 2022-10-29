@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/Imu.h>
 
@@ -11,18 +12,18 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <pigpiod_if2.h>
-#include "imu.h"
-#include "comp.h"
 
+#define ACC_X 5.0/16.0
+#define ACC_HEADING 20.0
 
 
 typedef struct {
     double velHeading;
-    double posHeading;
-
     double velX;
-    double velY;
-    
+    double velHeadingGoal;
+    double velXGoal;
+
+    double posHeading;
     double posX;
     double posY;
 } odom_data_t;
@@ -33,6 +34,12 @@ ros::Duration waitTime(0, 1000*1000*100);
 
 odom_data_t currentOdom = { 0 };
 
+void twist_callback(const geometry_msgs::Twist& msg)
+{
+    currentOdom.velHeadingGoal = msg.angular.z;
+    currentOdom.velXGoal       = msg.linear.x;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -42,22 +49,11 @@ int main(int argc, char *argv[])
 
     ros::NodeHandle n;
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+    ros::Subscriber sub = n.subscribe("cmd_vel", 1000, twist_callback);
+
     // tf::TransformBroadcaster odom_broadcaster;
 
-
-    ROS_INFO("IMU Init\n");
-    int pigPio = pigpio_start(NULL, NULL);
-    if (pigPio < 0) {
-        ROS_ERROR("IMU Init Failed\n");
-        return -1;
-    }
-    ROS_INFO("IMU Init Success\n");
     
-    imu_init(pigPio);
-    ROS_INFO("IMU Start Calibrate\n");
-    imu_calibrate(20);
-    ROS_INFO("IMU Stop Calibrate\n");
-
     // printf("dt, vH, pH, vX, vY, pX, pY\n");
     currentTime = ros::Time::now();
     lastTime = ros::Time::now();
@@ -65,35 +61,15 @@ int main(int argc, char *argv[])
     // while (ros::ok()) {
         
         
-        imu_reading_t * reading = imu_read();
-
-        ros::Duration deltaTime = (ros::Time::now() - currentTime);
+        double deltaTime = (ros::Time::now() - currentTime).toSec();
         currentTime = ros::Time::now();
-        // comp_calc(deltaTime.toSec(), reading);
-
-        // currentOdom.velHeading = (1-GAIN_VEL_H)*currentOdom.velHeading + GAIN_VEL_H*reading->tranGyroZ;
-        currentOdom.velHeading += reading->tranGyroZ;
-
-        // currentOdom.posHeading = (1-GAIN_POS_H)*currentOdom.posHeading + GAIN_POS_H*currentOdom.velHeading*deltaTime.toSec();
-        currentOdom.posHeading = currentOdom.velHeading*deltaTime.toSec();
-
         
-        // currentOdom.velX = (1-GAIN_VEL_XY)*currentOdom.velX + GAIN_VEL_XY*deltaTime.toSec()*reading->tranAccelX;
-        // currentOdom.velY = (1-GAIN_VEL_XY)*currentOdom.velX + GAIN_VEL_XY*deltaTime.toSec()*reading->tranAccelY;        
-        currentOdom.velX += deltaTime.toSec()*reading->tranAccelX; 
-        currentOdom.velY += deltaTime.toSec()*reading->tranAccelY; 
-
-        currentOdom.posX += cos(currentOdom.posHeading)*deltaTime.toSec()*currentOdom.velX + sin(currentOdom.posHeading)*deltaTime.toSec()*currentOdom.velY; 
-        currentOdom.posY += sin(currentOdom.posHeading)*deltaTime.toSec()*currentOdom.velX + cos(currentOdom.posHeading)*deltaTime.toSec()*currentOdom.velY; 
+        currentOdom.velX = (currentOdom.velXGoal - currentOdom.velX)*deltaTime*ACC_X;
+        currentOdom.velHeading = (currentOdom.velHeadingGoal - currentOdom.velHeading)*deltaTime*ACC_HEADING;
 
         
         if((ros::Time::now() - lastTime) > waitTime) {
             lastTime = ros::Time::now();
-            // imu_print(0);
-
-            // printf("%le, %lf, %lf, %lf, %lf, %lf, %lf\n", deltaTime.toSec(), currentOdom.velHeading, currentOdom.posHeading, currentOdom.velX, currentOdom.velY, currentOdom.posX, currentOdom.posY);
-
-            // geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(currentOdom.posHeading);
             geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(0);
 
             // geometry_msgs::TransformStamped odom_trans;
@@ -127,9 +103,9 @@ int main(int argc, char *argv[])
             //set the velocity
             odom.child_frame_id = "base_link";
             odom.twist.twist.linear.x = currentOdom.velX;
-            odom.twist.twist.linear.y = currentOdom.velY;
+            odom.twist.twist.linear.y = 0;
             odom.twist.twist.angular.z = currentOdom.velHeading;
-
+            printf("Current Speed %lf %lf\n", currentOdom.velX, currentOdom.velHeading);
             //publish the message
             odom_pub.publish(odom);
             // comp_print();

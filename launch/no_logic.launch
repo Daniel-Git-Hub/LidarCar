@@ -1,0 +1,17 @@
+<!-- 
+  Simulate a carlike robot with the teb_local_planner irl:
+  - rplidar
+  - imu
+  - gmapping
+  - move_base
+  - motor controller
+  - rviz view
+ -->
+<launch>
+
+	<node pkg="rplidar_ros" type="rplidarNode" name="rplidarNode"/>
+	<node pkg="lidarcar"  type="odom_fake_node" name="odom_fake_node" />
+
+	<node pkg="lidarcar" type="move_robot_node" name="move_robot_node" />
+
+</launch>
