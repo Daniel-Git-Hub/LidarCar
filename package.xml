@@ -67,6 +67,7 @@
   <exec_depend>tf</exec_depend>
 
     
+  <depend>rqt_robot_steering</depend>
   <depend>teb_local_planner</depend>
   <depend>move_base</depend>
   <depend>gmapping</depend>

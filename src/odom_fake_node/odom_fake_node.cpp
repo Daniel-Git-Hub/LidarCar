@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 {
     printf("Start\n");
     ROS_INFO("Start ROS\n");
-    ros::init(argc, argv, "imu_robot_node");
+    ros::init(argc, argv, "odom_fake_node");
 
     ros::NodeHandle n;
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
             odom.twist.twist.linear.x = currentOdom.velX;
             odom.twist.twist.linear.y = 0;
             odom.twist.twist.angular.z = currentOdom.velHeading;
-            printf("Current Speed %lf %lf\n", currentOdom.velX, currentOdom.velHeading);
+            // printf("Current Speed %lf %lf\n", currentOdom.velX, currentOdom.velHeading);
             //publish the message
             odom_pub.publish(odom);
             // comp_print();
@@ -113,8 +113,6 @@ int main(int argc, char *argv[])
         ros::spinOnce();
     }    
 
-    pigpio_stop(pigPio);
-    printf("Close\n");
     ROS_INFO("Close\n");
     return 0;
     // exit(0);
