@@ -12,7 +12,8 @@
 
 #define MAX_SPEED_IN 10.0
 #define MIN_SPEED_IN -5.0
-#define MIN_PWM      128
+// #define MIN_PWM      128
+#define MIN_PWM      160
 
 #define SERVO_PIN 18
 #define SERVO_MID 1820
