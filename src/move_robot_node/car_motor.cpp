@@ -1,5 +1,7 @@
 
 #include <pigpiod_if2.h>
+#include "ros/ros.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -18,7 +20,7 @@
 #define SERVO_PIN 18
 #define SERVO_MID 1820
 #define SERVO_RANGE 400.0
-#define SERVO_MAX_ANGLE 18.0
+#define SERVO_MAX_ANGLE (18.0*M_PI/180.0)
 
 #define SERVO_IN_RANGE 255 //from -255 to 255
 
@@ -53,7 +55,7 @@ int car_move(double speedDouble){
 
     int speed = (int)round(speedDouble * 255 / MAX_SPEED_IN);
     // printf("Speed %d\n", speed);
-    if(speed < MIN_PWM){
+    if(speed && speed < MIN_PWM){
         speed = MIN_PWM;
     }
 
@@ -81,7 +83,7 @@ int car_rotate(double magnitude){
     }
 
     int pulseWidth = SERVO_MID + (int)round(magnitude*SERVO_RANGE/SERVO_MAX_ANGLE);
-    printf("Pulse %d\n", pulseWidth);
+    ROS_WARN("Pulse %lf %d\n", magnitude, pulseWidth);
     // int servo = SERVO_MID + SERVO_RANGE*magnitude/SERVO_IN_RANGE;
 
     set_servo_pulsewidth(pigPio, SERVO_PIN, pulseWidth);
