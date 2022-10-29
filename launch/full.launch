@@ -1,0 +1,18 @@
+<!-- 
+  Simulate a carlike robot with the teb_local_planner irl:
+  - rplidar
+  - imu
+  - gmapping
+  - move_base
+  - motor controller
+  - rviz view
+ -->
+<launch>
+
+	<include file="$(find lidarcar)/launch/no_logic.launch"/>
+	
+	<include file="$(find lidarcar)/launch/logic.launch"/>
+	
+	<include file="$(find lidarcar)/launch/rviz_just.launch"/>
+	
+</launch>

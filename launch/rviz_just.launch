@@ -1,0 +1,9 @@
+<!--
+  - rviz view
+ -->
+<launch>
+
+	<!--  **************** Visualisation ****************  -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lidarcar)/cfg/rviz_navigation.rviz"/>
+
+</launch>

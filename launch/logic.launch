@@ -18,10 +18,6 @@
 		<param name="laser_max_dist " value="10" />
 		<param name="map_pub_period " value="0.5" />
 	</node>
-	<!-- <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" >
-		<param name="temporalUpdate " value="1" />
-	</node> -->
-
 
         <!--  ************** Navigation ***************  -->
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -41,10 +37,6 @@
 
 		<param name="clearing_rotation_allowed" value="false" /> <!-- Our carlike robot is not able to rotate in place -->
 	</node>
-
-
-	<!-- <node pkg="lidarcar" type="move_robot_node" name="move_robot_node" /> -->
-
 
 	<!--  **************** Visualisation ****************  -->
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lidarcar)/cfg/rviz_navigation.rviz"/>
