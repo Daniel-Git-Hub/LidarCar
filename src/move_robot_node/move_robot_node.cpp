@@ -35,7 +35,7 @@
 
 void twist_callback(const geometry_msgs::Twist& msg)
 {
-    ROS_INFO("Twist: angle=[%lf], linear=[%lf]", msg.angular.z, msg.linear.x);
+    ROS_INFO("MOVE_COMMAND: angle=[%lf], linear=[%lf]", msg.angular.z, msg.linear.x);
     car_rotate(msg.angular.z);
     car_move(msg.linear.x);
 }

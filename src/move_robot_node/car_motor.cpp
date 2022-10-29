@@ -12,10 +12,10 @@
 #define MOTOR_M 20
 // #define MOTOR_IN_RANGE 255 //from -255 to 255
 
-#define MAX_SPEED_IN 10.0
-#define MIN_SPEED_IN -5.0
+#define MAX_SPEED_IN 2
+#define MIN_SPEED_IN -1.0
 // #define MIN_PWM      128
-#define MIN_PWM      160
+#define MIN_PWM      180
 
 #define SERVO_PIN 18
 #define SERVO_MID 1820
@@ -83,7 +83,7 @@ int car_rotate(double magnitude){
     }
 
     int pulseWidth = SERVO_MID + (int)round(magnitude*SERVO_RANGE/SERVO_MAX_ANGLE);
-    ROS_WARN("Pulse %lf %d\n", magnitude, pulseWidth);
+    // ROS_WARN("Pulse %lf %d\n", magnitude, pulseWidth);
     // int servo = SERVO_MID + SERVO_RANGE*magnitude/SERVO_IN_RANGE;
 
     set_servo_pulsewidth(pigPio, SERVO_PIN, pulseWidth);
