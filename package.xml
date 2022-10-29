@@ -70,7 +70,7 @@
   <depend>teb_local_planner</depend>
   <depend>move_base</depend>
   <depend>gmapping</depend>
-  <depend>hector_mapping</depend>
+  <depend>hector_slam</depend>
   <depend>navigation </depend>
   <!-- <exec_depend>tf</exec_depend> -->
   <depend>rplidar_ros</depend>
