@@ -15,8 +15,9 @@
 #define MAX_SPEED_IN 0.5
 #define MIN_SPEED_IN -0.5
 // #define MIN_PWM      128
-#define MIN_PWM      400000
+#define MIN_PWM      450000
 #define MAX_PWM      650000
+#define ANGLE_BOOST_PWM  100000
 #define FREQ_PWM     10
 
 #define SERVO_PIN 18
@@ -24,7 +25,6 @@
 #define SERVO_RANGE 400.0
 #define SERVO_MAX_ANGLE (18.0*M_PI/180.0)
 
-#define SERVO_IN_RANGE 255 //from -255 to 255
 
 int pigPio = -1;
 
@@ -46,55 +46,7 @@ int car_init(int p){
     return 0;
 }
 
-int car_active(){
-    carState = 1;
-    if(speed == 0){
-        gpio_write(pigPio, MOTOR_P, 0);
-        gpio_write(pigPio, MOTOR_M, 0);
-        gpio_write(pigPio, MOTOR_ENABLE, 1);
-    }else if(reverse) {
-        gpio_write(pigPio, MOTOR_M, 0);
-        gpio_write(pigPio, MOTOR_P, 1);
-        set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
-    }else {
-        gpio_write(pigPio, MOTOR_P, 0);
-        gpio_write(pigPio, MOTOR_M, 1);
-        set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
-    }
-    return 0;
-}
-
-int car_deactive(){
-    carState = 0;
-    if(speed == 0){
-        gpio_write(pigPio, MOTOR_P, 0);
-        gpio_write(pigPio, MOTOR_M, 0);
-        gpio_write(pigPio, MOTOR_ENABLE, 1);
-    }else if(reverse) {
-        gpio_write(pigPio, MOTOR_M, 0);
-        gpio_write(pigPio, MOTOR_P, 1);
-        set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
-    }else {
-        gpio_write(pigPio, MOTOR_P, 0);
-        gpio_write(pigPio, MOTOR_M, 1);
-        set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
-    }
-    return 0;
-}
-
-int car_update(){
-    // if((ros::Time::now() - speedLastTime) > speedWaitTime) {
-    //     if(carState){
-    //         car_deactive();
-    //     }else{
-    //         car_active();
-    //     }
-    //     speedLastTime = ros::Time::now();
-    // }
-    return 0;
-}
-
-int car_move(double speedDouble){
+int car_move(double speedDouble, double angle){
 
     if(speedDouble < MIN_SPEED_IN){
         speedDouble = MIN_SPEED_IN;
@@ -109,19 +61,24 @@ int car_move(double speedDouble){
     //     speedDouble = speedDouble*2/3;
     // }
     if(speedDouble){
-        speed = (int)round( (speedDouble/MAX_SPEED_IN) * (MAX_PWM-MIN_PWM) + MIN_PWM );
+        speed = (int)round( ((speedDouble/MAX_SPEED_IN) * (MAX_PWM-MIN_PWM) + MIN_PWM) + (ANGLE_BOOST_PWM * abs(angle)/SERVO_MAX_ANGLE ) );
+        
     }else{
         speed = 0;
     }
-    speed = (int)round(speedDouble * MAX_PWM / MAX_SPEED_IN);
-    // ROS_WARN("Speed %d, %d - %lf\n", reverse, speed, speedDouble);
-    if(speed && speed < MIN_PWM){
-        speed = MIN_PWM;
-    }
+    
+    
+    
+    // speed = (int)round(speedDouble * MAX_PWM / MAX_SPEED_IN);
+    // if(speed && speed < MIN_PWM){
+    //     speed = MIN_PWM;
+    // }
 
     // if(carState){
     //     car_active();
     // }
+
+    ROS_WARN("Speed %d - %lf\n", speed, angle);
 
     if(speed == 0){
         gpio_write(pigPio, MOTOR_P, 0);

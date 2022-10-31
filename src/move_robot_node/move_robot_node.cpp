@@ -37,7 +37,7 @@ void twist_callback(const geometry_msgs::Twist& msg)
 {
     ROS_INFO("MOVE_COMMAND: angle=[%lf], linear=[%lf]", msg.angular.z, msg.linear.x);
     car_rotate(msg.angular.z);
-    car_move(msg.linear.x);
+    car_move(msg.linear.x, msg.angular.z);
 }
 
 int main(int argc, char *argv[])
@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
     car_init(pigPio);
     
     while (ros::ok()) {
-        car_update();
         ros::spinOnce();
     }    
     // ROS_INFO("-100\n");
