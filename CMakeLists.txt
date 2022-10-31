@@ -125,6 +125,10 @@ add_executable(move_robot_node src/move_robot_node/move_robot_node.cpp src/move_
 add_executable(imu_robot_node src/imu_robot_node/imu_robot_node.cpp src/imu_robot_node/imu.cpp src/imu_robot_node/comp.cpp)
 add_executable(odom_fake_node src/odom_fake_node/odom_fake_node.cpp)
 
+add_executable(diff_motor_node src/diff_motor_node/diff_motor_node.cpp src/diff_motor_node/diff_motor.cpp src/diff_motor_node/motor_controller.cpp)
+add_executable(diff_encoder_node src/diff_encoder_node/diff_encoder_node.cpp src/diff_encoder_node/diff_encoder.cpp src/diff_encoder_node/rotary_encoder.cpp)
+
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -136,6 +140,8 @@ add_executable(odom_fake_node src/odom_fake_node/odom_fake_node.cpp)
 add_dependencies(move_robot_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(imu_robot_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(odom_fake_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(diff_encoder_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(diff_motor_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(move_robot_node
@@ -150,4 +156,15 @@ target_link_libraries(imu_robot_node
 
 target_link_libraries(odom_fake_node
   ${catkin_LIBRARIES}
+)
+
+target_link_libraries(diff_motor_node
+  ${catkin_LIBRARIES}
+  pigpiod_if2
+
+)
+
+target_link_libraries(diff_encoder_node
+  ${catkin_LIBRARIES}
+  pigpiod_if2
 )

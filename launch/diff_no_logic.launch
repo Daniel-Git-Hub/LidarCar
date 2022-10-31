@@ -1,0 +1,17 @@
+<!-- 
+  Simulate a carlike robot with the teb_local_planner irl:
+  - rplidar
+  - imu
+  - gmapping
+  - move_base
+  - motor controller
+  - rviz view
+ -->
+<launch>
+
+	<node pkg="rplidar_ros" type="rplidarNode" name="rplidarNode"/>
+	<node pkg="lidarcar"  type="diff_encoder_node" name="diff_encoder_node" />
+
+	<node pkg="lidarcar" type="diff_motor_node" name="diff_motor_node" />
+
+</launch>

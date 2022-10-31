@@ -17,8 +17,8 @@
 // #define MIN_PWM      128
 #define MIN_PWM      450000
 #define MAX_PWM      650000
-#define ANGLE_BOOST_PWM  100000
-#define FREQ_PWM     10
+#define ANGLE_BOOST_PWM  200000
+#define FREQ_PWM     20
 
 #define SERVO_PIN 18
 #define SERVO_MID 1820
@@ -45,7 +45,8 @@ int car_init(int p){
     // set_PWM_frequency(pigPio, MOTOR_ENABLE, 10);
     return 0;
 }
-
+int prevSpeed = 0;
+#define SPEED_DIFF 1000
 int car_move(double speedDouble, double angle){
 
     if(speedDouble < MIN_SPEED_IN){
@@ -77,25 +78,26 @@ int car_move(double speedDouble, double angle){
     // if(carState){
     //     car_active();
     // }
-
-    ROS_WARN("Speed %d - %lf\n", speed, angle);
-
-    if(speed == 0){
-        gpio_write(pigPio, MOTOR_P, 0);
-        gpio_write(pigPio, MOTOR_M, 0);
-        gpio_write(pigPio, MOTOR_ENABLE, 1);
-    }else if(reverse) {
-        gpio_write(pigPio, MOTOR_M, 0);
-        gpio_write(pigPio, MOTOR_P, 1);
-        hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
-        // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
-    }else {
-        gpio_write(pigPio, MOTOR_P, 0);
-        gpio_write(pigPio, MOTOR_M, 1);
-        hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
-        // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
+    if(abs(speed - prevSpeed) >= SPEED_DIFF || !speed){
+        ROS_WARN("Speed %d - %lf\n", speed, angle);
+        
+        if(speed == 0){
+            gpio_write(pigPio, MOTOR_P, 0);
+            gpio_write(pigPio, MOTOR_M, 0);
+            gpio_write(pigPio, MOTOR_ENABLE, 1);
+        }else if(reverse) {
+            gpio_write(pigPio, MOTOR_M, 0);
+            gpio_write(pigPio, MOTOR_P, 1);
+            hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+            // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
+        }else {
+            gpio_write(pigPio, MOTOR_P, 0);
+            gpio_write(pigPio, MOTOR_M, 1);
+            hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+            // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
+        }
+        prevSpeed = speed;
     }
-
 
     return 0;
 }

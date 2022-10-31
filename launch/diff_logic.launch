@@ -1,0 +1,46 @@
+<!-- 
+  Simulate a carlike robot with the teb_local_planner irl:
+  - rplidar
+  - imu
+  - gmapping
+  - move_base
+  - motor controller
+  - rviz view
+ -->
+<launch>
+
+	<node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" >
+		<param name="map_frame" value="map" />
+		<param name="laser_min_dist" value="0" />
+		<param name="laser_max_dist " value="10" />
+		<param name="map_update_distance_thresh" value="0.3" />
+		<param name="map_update_angle_thresh" value="0.6" />
+		<param name="map_pub_period " value="0.5" />
+		<param name="map_size" value="2048" />
+		<param name="map_resolution" value="0.0125" />
+		
+	</node>
+
+        <!--  ************** Navigation ***************  -->
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  	  	<rosparam file="$(find lidarcar)/cfg/diff_drive/costmap_common_params.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="$(find lidarcar)/cfg/diff_drive/costmap_common_params.yaml" command="load" ns="local_costmap" />
+  		<rosparam file="$(find lidarcar)/cfg/diff_drive/local_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find lidarcar)/cfg/diff_drive/global_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find lidarcar)/cfg/diff_drive/teb_local_planner_params.yaml" command="load" />
+
+		<param name="base_global_planner" value="global_planner/GlobalPlanner" />
+		<param name="planner_frequency" value="1.0" />
+		<param name="planner_patience" value="5.0" />
+
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" />
+
+		<param name="clearing_rotation_allowed" value="true" />
+	</node>
+
+	<!--  **************** Visualisation ****************  -->
+	<!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find lidarcar)/cfg/rviz_navigation.rviz"/> -->
+
+</launch>
