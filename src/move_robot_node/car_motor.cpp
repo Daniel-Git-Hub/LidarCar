@@ -15,8 +15,8 @@
 #define MAX_SPEED_IN 0.5
 #define MIN_SPEED_IN -0.5
 // #define MIN_PWM      128
-#define MIN_PWM      300000
-#define MAX_PWM      600000
+#define MIN_PWM      400000
+#define MAX_PWM      650000
 #define FREQ_PWM     10
 
 #define SERVO_PIN 18
@@ -108,15 +108,38 @@ int car_move(double speedDouble){
     // if(!reverse){
     //     speedDouble = speedDouble*2/3;
     // }
-
+    if(speedDouble){
+        speed = (int)round( (speedDouble/MAX_SPEED_IN) * (MAX_PWM-MIN_PWM) + MIN_PWM );
+    }else{
+        speed = 0;
+    }
     speed = (int)round(speedDouble * MAX_PWM / MAX_SPEED_IN);
-    // printf("Speed %d\n", speed);
+    // ROS_WARN("Speed %d, %d - %lf\n", reverse, speed, speedDouble);
     if(speed && speed < MIN_PWM){
         speed = MIN_PWM;
     }
-    if(carState){
-        car_active();
+
+    // if(carState){
+    //     car_active();
+    // }
+
+    if(speed == 0){
+        gpio_write(pigPio, MOTOR_P, 0);
+        gpio_write(pigPio, MOTOR_M, 0);
+        gpio_write(pigPio, MOTOR_ENABLE, 1);
+    }else if(reverse) {
+        gpio_write(pigPio, MOTOR_M, 0);
+        gpio_write(pigPio, MOTOR_P, 1);
+        hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+        // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
+    }else {
+        gpio_write(pigPio, MOTOR_P, 0);
+        gpio_write(pigPio, MOTOR_M, 1);
+        hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+        // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
     }
+
+
     return 0;
 }
 

@@ -10,8 +10,8 @@
 <launch>
 
   <node pkg="rqt_robot_steering" type="rqt_robot_steering" name="rqt_robot_steering">
-    <param name="default_vx_max" type="double" value="10" />
-    <param name="default_vx_min" type="double" value="-5" />
+    <param name="default_vx_max" type="double" value="0.5" />
+    <param name="default_vx_min" type="double" value="-0.5" />
     <param name="default_vw_max" type="double" value="0.34906585039" />
     <param name="default_vw_min" type="double" value="-0.34906585039" />
   </node>
