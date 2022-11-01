@@ -15,6 +15,9 @@
 		<param name="map_update_interval" value="0.5" />
 		<param name="maxUrange" value="10" />
 		<param name="maxRange" value="12" />
+		<param name="linearUpdate" value="0.5" />
+		<param name="angularUpdate" value="0.25" />
+		<param name="temporalUpdate" value="2" />
 
 
 	</node>	

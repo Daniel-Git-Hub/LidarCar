@@ -5,7 +5,7 @@
 #define ANUGULAR_GAIN (1000000/7.9)    //dutyCylce/(rad/s)
 #define LINEAR_GAIN   (1/0.167)  //dutyCylce/(m/s)
 
-#define LEFT_GAIN  0.9
+#define LEFT_GAIN  1
 #define RIGHT_GAIN 1
 #define ANGLE_GAIN -0.1
 #define ENCODER_TIME_UPDATE 0.025
