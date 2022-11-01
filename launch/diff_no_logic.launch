@@ -12,6 +12,6 @@
 	<node pkg="rplidar_ros" type="rplidarNode" name="rplidarNode"/>
 	<node pkg="lidarcar"  type="diff_encoder_node" name="diff_encoder_node" />
 
-	<node pkg="lidarcar" type="diff_motor_node" name="diff_motor_node" />
+	<!-- <node pkg="lidarcar" type="diff_motor_node" name="diff_motor_node" /> -->
 
 </launch>

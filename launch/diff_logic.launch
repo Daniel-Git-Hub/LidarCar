@@ -8,6 +8,9 @@
   - rviz view
  -->
 <launch>
+
+	<node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 base_link laser_frame 100" />
+
 	<node pkg="gmapping" type="slam_gmapping" name="slam_gmapping">
 		<param name="map_update_interval" value="0.5" />
 		<param name="maxUrange" value="10" />

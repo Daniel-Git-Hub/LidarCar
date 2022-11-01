@@ -9,7 +9,7 @@ class diff_encoder {
     private:
 
 
-    double halfBaseWidth;
+    double baseWidth;
     speed_t lastSpeed;
 
     public:

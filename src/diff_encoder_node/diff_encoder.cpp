@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 diff_encoder::diff_encoder(double h, int encL1, int encL2, int encR1, int encR2){
-    halfBaseWidth = h;
+    baseWidth = 2*h;
     leftEnc.set_pin(encL1, encL2);
     rightEnc.set_pin(encR1, encR2);
 }
@@ -26,6 +26,6 @@ int diff_encoder::update(double sec){
 
 speed_t * diff_encoder::get_speed(){
     lastSpeed.linear = (rightEnc.speed + leftEnc.speed)/2;
-    lastSpeed.angular = (rightEnc.speed - leftEnc.speed)/halfBaseWidth;
+    lastSpeed.angular = (rightEnc.speed - leftEnc.speed)/baseWidth;
     return &lastSpeed;
 }
