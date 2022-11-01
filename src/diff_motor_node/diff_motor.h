@@ -19,7 +19,7 @@ class diff_motor {
     int init(int pigpiod);
     
     //speed_t is small so its a paramater/returned instead of a pointer
-    int set_speed(speed_t speed);
+    int set_speed(double linear, double angular);
     int set_pwm(int l, int r);
     int close();
 

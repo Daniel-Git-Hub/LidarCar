@@ -19,8 +19,8 @@ int pigPio = 0;
 void twist_callback(const geometry_msgs::Twist& msg)
 {
     ROS_INFO("MOVE_COMMAND: angle=[%lf], linear=[%lf]", msg.angular.z, msg.linear.x);
-    speed_t speed = { msg.linear.x, msg.angular.z };
-    motorController.set_speed(speed);
+    // speed_t speed = { msg.linear.x, msg.angular.z };
+    motorController.set_speed(msg.linear.x, msg.angular.z);
 }
 
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     pigPio = pigpio_start(NULL, NULL);
     if(pigPio < 0){
-        printf("Failed Init\n");
+        ROS_ERROR("DIFF Failed Init\n");
         return 1;
     }
     motorController.init(pigPio);

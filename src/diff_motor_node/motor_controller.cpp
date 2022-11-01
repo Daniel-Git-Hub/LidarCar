@@ -30,7 +30,7 @@ int motor_controller::init(int pig){
 int motor_controller::set_speed(double speed){
     lastSpeed = speed;
 
-    int p = (int)round(speed*LINEAR_GAIN);
+    int p = (int)round(speed*LINEAR_GAIN*(PWM_MAX-PWM_MIN));
     // printf("PWM %d, %d, %lf\n", pwm, (int)round(1000000*(abs(speed)*5 - 0.6)), round(1000000*(abs(speed)*5 - 0.6)));
     
     // else if(reverse){
@@ -49,12 +49,10 @@ int motor_controller::set_speed(double speed){
 int motor_controller::set_pwm(int p){
     pwm = p;
     int8_t reverse = pwm > 0;
-    p = abs(p);
+    p = abs(p) + PWM_MIN;
 
     if(pwm > 1000000){
         pwm = 1000000;
-    } else if(pwm && pwm < PWM_MIN){
-        pwm = PWM_MIN;
     }
 
     if(pwm == 0){ //brake

@@ -18,9 +18,10 @@ int diff_motor::init(int pigpiod){
 
 
 
-int diff_motor::set_speed(speed_t speed){
-    leftCon.set_speed((speed.linear - halfBaseWidth*speed.angular)*LEFT_GAIN);
-    rightCon.set_speed((speed.linear + halfBaseWidth*speed.angular)*RIGHT_GAIN);
+int diff_motor::set_speed(double linear, double angular){
+
+    leftCon.set_speed((linear - halfBaseWidth*angular)*LEFT_GAIN);
+    rightCon.set_speed((linear + halfBaseWidth*angular)*RIGHT_GAIN);
     return 0;
 }
 
