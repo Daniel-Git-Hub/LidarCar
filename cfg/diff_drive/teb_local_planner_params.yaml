@@ -26,9 +26,7 @@ TebLocalPlannerROS:
  acc_lim_x: 0.166
  acc_lim_theta: 3
 
- min_turning_radius: 0
- wheelbase: 0.120     
- cmd_angle_instead_rotvel: False
+ min_turning_radius: 0.0
 
  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
    type: "circular"
@@ -50,8 +48,8 @@ TebLocalPlannerROS:
     
  # Obstacles
     
- min_obstacle_dist: 0.075 # This value must also include our robot's expansion, since footprint_model is set to "line".
- inflation_dist: 0.1
+ min_obstacle_dist: 0.05 
+ inflation_dist: 0.5
  include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 1.0
  obstacle_poses_affected: 15
