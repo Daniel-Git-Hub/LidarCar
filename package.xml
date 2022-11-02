@@ -77,7 +77,7 @@
   <depend>rplidar_ros</depend>
   <depend>laser_scan_matcher</depend>
   <depend>sensor_msgs</depend>
-  <depend>stage</depend>
+  <depend>stage_ros</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
