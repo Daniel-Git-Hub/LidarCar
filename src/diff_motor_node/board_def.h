@@ -7,7 +7,7 @@
 
 #define LEFT_GAIN  1
 #define RIGHT_GAIN 1
-#define ANGLE_GAIN -0.1
+#define ANGLE_GAIN -0.2
 #define ENCODER_TIME_UPDATE 0.025
 
 #define PMW_FREQUENCY 40

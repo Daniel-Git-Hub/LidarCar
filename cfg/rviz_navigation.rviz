@@ -80,7 +80,7 @@ Visualization Manager:
           Unreliable: false
           Value: true
         - Class: rviz/Marker
-          Enabled: true
+          Enabled: false
           Marker Topic: /move_base/TebLocalPlannerROS/teb_markers
           Name: TebMarker
           Namespaces:
@@ -118,7 +118,7 @@ Visualization Manager:
           Class: rviz/Map
           Color Scheme: map
           Draw Behind: false
-          Enabled: true
+          Enabled: false
           Name: LocalCostmap
           Topic: /move_base/local_costmap/costmap
           Unreliable: false
@@ -156,7 +156,7 @@ Visualization Manager:
           Class: rviz/Map
           Color Scheme: map
           Draw Behind: false
-          Enabled: true
+          Enabled: false
           Name: GlobalCostmap
           Topic: /move_base/global_costmap/costmap
           Unreliable: false
