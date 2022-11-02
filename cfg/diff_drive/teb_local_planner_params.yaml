@@ -9,7 +9,7 @@ TebLocalPlannerROS:
  dt_hysteresis: 0.1
  max_samples: 500
  global_plan_overwrite_orientation: True
- allow_init_with_backwards_motion: True
+ allow_init_with_backwards_motion: False
  max_global_plan_lookahead_dist: 3.0
  global_plan_viapoint_sep: -1
  global_plan_prune_distance: 1
@@ -19,27 +19,27 @@ TebLocalPlannerROS:
     
  # Robot
          
- max_vel_x: 0.3
- max_vel_x_backwards: 0.3
+ max_vel_x: 0.166
+ max_vel_x_backwards: 0.166
  max_vel_y: 0.0
  max_vel_theta: 3 # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
- acc_lim_x: 1
- acc_lim_theta: 20
+ acc_lim_x: 0.166
+ acc_lim_theta: 3
 
  min_turning_radius: 0
  wheelbase: 0.120     
  cmd_angle_instead_rotvel: False
 
  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
-   type: "line"
-   radius: 0.2 # for type "circular"
-   line_start: [-0.083, 0.0] # for type "line"
-   line_end: [0.083, 0.0] # for type "line"
-   front_offset: 0.2 # for type "two_circles"
-   front_radius: 0.2 # for type "two_circles"
-   rear_offset: 0.2 # for type "two_circles"
-   rear_radius: 0.2 # for type "two_circles"
-   vertices: [ [0.25, -0.05], [0.18, -0.05], [0.18, -0.18], [-0.19, -0.18], [-0.25, 0], [-0.19, 0.18], [0.18, 0.18], [0.18, 0.05], [0.25, 0.05] ] # for type "polygon"
+   type: "circular"
+   radius: 0.125 # for type "circular"
+  #  line_start: [-0.125, 0.125] # for type "line"
+  #  line_end: [0.083, 0.0] # for type "line"
+  #  front_offset: 0.2 # for type "two_circles"
+  #  front_radius: 0.2 # for type "two_circles"
+  #  rear_offset: 0.2 # for type "two_circles"
+  #  rear_radius: 0.2 # for type "two_circles"
+  #  vertices: [ [0.25, -0.05], [0.18, -0.05], [0.18, -0.18], [-0.19, -0.18], [-0.25, 0], [-0.19, 0.18], [0.18, 0.18], [0.18, 0.05], [0.25, 0.05] ] # for type "polygon"
 
  # GoalTolerance
     
