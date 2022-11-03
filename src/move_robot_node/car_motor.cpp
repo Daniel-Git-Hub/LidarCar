@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <math.h>
 
-#define MOTOR_ENABLE 12
+#define MOTOR_ENABLE 19
 #define MOTOR_P 21
 #define MOTOR_M 20
 // #define MOTOR_IN_RANGE 255 //from -255 to 255
@@ -15,8 +15,8 @@
 #define MAX_SPEED_IN 0.5
 #define MIN_SPEED_IN -0.5
 // #define MIN_PWM      128
-#define MIN_PWM      450000
-#define MAX_PWM      650000
+#define MIN_PWM      550000
+#define MAX_PWM      750000
 #define ANGLE_BOOST_PWM  0
 // #define ANGLE_BOOST_PWM  200000
 #define FREQ_PWM     20
@@ -25,7 +25,7 @@
 #define SERVO_MID 1820
 #define SERVO_RANGE 400.0
 #define SERVO_MAX_ANGLE (18.0*M_PI/180.0)
-
+#define SERVO_FREQ 50.0
 
 int pigPio = -1;
 
@@ -81,7 +81,7 @@ int car_move(double speedDouble, double angle){
     //     car_active();
     // }
     if((prevDir != reverse || abs(speed - prevSpeed) >= SPEED_DIFF) || !speed){
-        ROS_WARN("Speed %d - %lf\n", speed, angle);
+        // ROS_WARN("Speed %d - %lf\n", speed, angle);
         
         if(speed == 0){
             gpio_write(pigPio, MOTOR_P, 0);
@@ -113,10 +113,12 @@ int car_rotate(double magnitude){
     }
 
     int pulseWidth = SERVO_MID + (int)round(magnitude*SERVO_RANGE/SERVO_MAX_ANGLE);
+    // int pulseWidth =  (int)round((SERVO_MID + magnitude*SERVO_RANGE/SERVO_MAX_ANGLE)*SERVO_FREQ);
     // ROS_WARN("Pulse %lf %d\n", magnitude, pulseWidth);
     // int servo = SERVO_MID + SERVO_RANGE*magnitude/SERVO_IN_RANGE;
-
+    // ROS_WARN("Angle %lf, %d", magnitude, pulseWidth);
     set_servo_pulsewidth(pigPio, SERVO_PIN, pulseWidth);
+    // hardware_PWM(pigPio, SERVO_PIN, SERVO_FREQ, pulseWidth);
 
     return 0;
 }
