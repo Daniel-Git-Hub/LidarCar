@@ -17,7 +17,8 @@
 // #define MIN_PWM      128
 #define MIN_PWM      450000
 #define MAX_PWM      650000
-#define ANGLE_BOOST_PWM  200000
+#define ANGLE_BOOST_PWM  0
+// #define ANGLE_BOOST_PWM  200000
 #define FREQ_PWM     20
 
 #define SERVO_PIN 18
@@ -46,7 +47,8 @@ int car_init(int p){
     return 0;
 }
 int prevSpeed = 0;
-#define SPEED_DIFF 1000
+int prevDir = 0;
+#define SPEED_DIFF 10
 int car_move(double speedDouble, double angle){
 
     if(speedDouble < MIN_SPEED_IN){
@@ -78,7 +80,7 @@ int car_move(double speedDouble, double angle){
     // if(carState){
     //     car_active();
     // }
-    if(abs(speed - prevSpeed) >= SPEED_DIFF || !speed){
+    if((prevDir != reverse || abs(speed - prevSpeed) >= SPEED_DIFF) || !speed){
         ROS_WARN("Speed %d - %lf\n", speed, angle);
         
         if(speed == 0){
@@ -97,6 +99,7 @@ int car_move(double speedDouble, double angle){
             // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
         }
         prevSpeed = speed;
+        prevDir = reverse;
     }
 
     return 0;
