@@ -12,8 +12,8 @@
 #define MOTOR_M 20
 // #define MOTOR_IN_RANGE 255 //from -255 to 255
 
-#define MAX_SPEED_IN 0.5
-#define MIN_SPEED_IN -0.5
+#define MAX_SPEED_IN 0.22
+#define MIN_SPEED_IN -0.22
 // #define MIN_PWM      128
 #define MIN_PWM      550000
 #define MAX_PWM      750000

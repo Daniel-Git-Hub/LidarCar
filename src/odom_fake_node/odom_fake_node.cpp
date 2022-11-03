@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <pigpiod_if2.h>
 
-#define ACC_X 1.0/1.0
+#define ACC_X 1.0/0.44
 #define ACC_HEADING 20.0
 
 
