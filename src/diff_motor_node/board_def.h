@@ -2,7 +2,6 @@
 #define BOARD_DEF_H
 
 #define M_PER_ENCODER (2.0/5258.0)
-#define ANUGULAR_GAIN (1000000/7.9)    //dutyCylce/(rad/s)
 #define LINEAR_GAIN   (1/0.21)  //dutyCylce/(m/s)
 
 #define LEFT_GAIN  0.9
