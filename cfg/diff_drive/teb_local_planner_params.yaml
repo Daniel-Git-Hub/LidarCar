@@ -19,12 +19,12 @@ TebLocalPlannerROS:
     
  # Robot
          
- max_vel_x: 0.22
- max_vel_x_backwards: 0.22
+ max_vel_x: 0.21
+ max_vel_x_backwards: 0.21
  max_vel_y: 0.0
  max_vel_theta: 3.6 # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
- acc_lim_x: 0.166
- acc_lim_theta: 18
+ acc_lim_x: 0.21
+ acc_lim_theta: 3.6
 
  min_turning_radius: 0.0
 
@@ -41,8 +41,8 @@ TebLocalPlannerROS:
 
  # GoalTolerance
     
- xy_goal_tolerance: 0.02
- yaw_goal_tolerance: 0.75
+ xy_goal_tolerance: 0.1
+ yaw_goal_tolerance: 0.78
  free_goal_vel: False
  complete_global_plan: True
     
