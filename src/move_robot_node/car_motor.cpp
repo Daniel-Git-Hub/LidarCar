@@ -15,11 +15,11 @@
 #define MAX_SPEED_IN 0.75
 #define MIN_SPEED_IN -0.75
 // #define MIN_PWM      128
-#define MIN_PWM      550000
-#define MAX_PWM      750000
-#define ANGLE_BOOST_PWM  0
+#define MIN_PWM          300000
+#define MAX_PWM          900000
+#define ANGLE_BOOST_PWM   50000
 // #define ANGLE_BOOST_PWM  200000
-#define FREQ_PWM     4
+#define FREQ_PWM     10
 
 #define SERVO_PIN 18
 #define SERVO_MID 1820
@@ -27,13 +27,28 @@
 #define SERVO_MAX_ANGLE (18.0*M_PI/180.0)
 #define SERVO_FREQ 50.0
 
+#define SPEED_DIFF 10
+#define RAMP_TIME 0.3
+
+typedef enum {
+    CAR_STATE_OFF,
+    CAR_STATE_FORWARD_RAMP,
+    CAR_STATE_FORWARD,
+    CAR_STATE_BACKWARD_RAMP,
+    CAR_STATE_BACKWARD,
+
+} car_state_t;
+
 int pigPio = -1;
 
 int speed = 0;
 int reverse = 0;
-int carState = 1;
-ros::Time speedLastTime;
-ros::Duration speedWaitTime(0, 1000*1000*1000);
+car_state_t carState = CAR_STATE_OFF;
+
+int prevSpeed = 0;
+int prevDir = 0;
+double rampStart = 0;
+
 
 int car_init(int p){
     pigPio = p;
@@ -41,14 +56,29 @@ int car_init(int p){
     set_mode(pigPio, MOTOR_P, PI_OUTPUT);
     set_mode(pigPio, MOTOR_M, PI_OUTPUT);
     set_mode(pigPio, SERVO_PIN, PI_OUTPUT);
+
     gpio_write(pigPio, MOTOR_ENABLE, 0);
     // set_servo_pulsewidth(pigPio, SERVO_PIN, SERVO_MID);
-    // set_PWM_frequency(pigPio, MOTOR_ENABLE, 10);
+    set_PWM_frequency(pigPio, MOTOR_P, FREQ_PWM);
+    set_PWM_frequency(pigPio, MOTOR_M, FREQ_PWM);
     return 0;
 }
-int prevSpeed = 0;
-int prevDir = 0;
-#define SPEED_DIFF 10
+
+
+int car_update(){
+
+    // if(carState == CAR_STATE_BACKWARD_RAMP || carState == CAR_STATE_FORWARD_RAMP ){
+    //     if(time_time() - rampStart > RAMP_TIME){
+    //         ROS_WARN("CAR SLOW %d", speed);
+    //         hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+    //         carState = (CAR_STATE_BACKWARD_RAMP ? CAR_STATE_BACKWARD : CAR_STATE_FORWARD);
+    //     }
+
+    // }
+
+    return 0;
+}
+
 int car_move(double speedDouble, double angle){
 
     if(speedDouble < MIN_SPEED_IN){
@@ -56,51 +86,101 @@ int car_move(double speedDouble, double angle){
     }else if(speedDouble > MAX_SPEED_IN){
         speedDouble = MAX_SPEED_IN;
     }
-    
-    int reverse = speedDouble > 0;
+    reverse = speedDouble > 0;
     speedDouble = abs(speedDouble);
 
-    // if(!reverse){
-    //     speedDouble = speedDouble*2/3;
-    // }
+
     if(speedDouble){
+        // speed = (int)round( ((speedDouble/MAX_SPEED_IN) * (MAX_PWM-MIN_PWM) + MIN_PWM) );
         speed = (int)round( ((speedDouble/MAX_SPEED_IN) * (MAX_PWM-MIN_PWM) + MIN_PWM) + (ANGLE_BOOST_PWM * abs(angle)/SERVO_MAX_ANGLE ) );
         
     }else{
         speed = 0;
     }
     
-    
-    
-    // speed = (int)round(speedDouble * MAX_PWM / MAX_SPEED_IN);
-    // if(speed && speed < MIN_PWM){
-    //     speed = MIN_PWM;
-    // }
-
-    // if(carState){
-    //     car_active();
-    // }
-    if((prevDir != reverse || abs(speed - prevSpeed) >= SPEED_DIFF) || !speed){
-        // ROS_WARN("Speed %d - %lf\n", speed, angle);
-        
-        if(speed == 0){
-            gpio_write(pigPio, MOTOR_P, 0);
-            gpio_write(pigPio, MOTOR_M, 0);
-            gpio_write(pigPio, MOTOR_ENABLE, 1);
-        }else if(reverse) {
-            gpio_write(pigPio, MOTOR_M, 0);
-            gpio_write(pigPio, MOTOR_P, 1);
-            hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
-            // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
-        }else {
-            gpio_write(pigPio, MOTOR_P, 0);
-            gpio_write(pigPio, MOTOR_M, 1);
-            hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
-            // set_PWM_dutycycle(pigPio, MOTOR_ENABLE, speed);
-        }
+    if(prevSpeed == 0 && speed){
+        set_mode(pigPio, MOTOR_ENABLE, PI_OUTPUT);
+        set_mode(pigPio, MOTOR_P, PI_OUTPUT);
+        set_mode(pigPio, MOTOR_M, PI_OUTPUT);
         prevSpeed = speed;
-        prevDir = reverse;
     }
+
+    if(speed){
+        // if(reverse){
+        //     gpio_write(pigPio, MOTOR_M, 0);
+        //     set_PWM_dutycycle(pigPio, MOTOR_P, speed*255/1000000);
+        
+        // }else{
+        //     gpio_write(pigPio, MOTOR_P, 0);
+        //     set_PWM_dutycycle(pigPio, MOTOR_M, speed*255/1000000);
+        // }
+        gpio_write(pigPio, MOTOR_P, reverse);
+        gpio_write(pigPio, MOTOR_M, !reverse);
+        hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+
+        // if(reverse){
+        //     if(carState != CAR_STATE_FORWARD && carState != CAR_STATE_FORWARD_RAMP ){
+        //         carState = CAR_STATE_FORWARD_RAMP;
+        //         rampStart = time_time();
+        //         // hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+        //         gpio_write(pigPio, MOTOR_ENABLE, 1);
+        //         return 0;
+        //     }
+        //     if(carState == CAR_STATE_FORWARD_RAMP){
+        //         return 0;
+        //     }
+        // }else{
+        //     if(carState != CAR_STATE_BACKWARD && carState != CAR_STATE_BACKWARD_RAMP ){
+        //         carState = CAR_STATE_BACKWARD_RAMP;
+        //         rampStart = time_time();
+        //         // hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+        //         gpio_write(pigPio, MOTOR_ENABLE, 1);
+        //         return 0;
+
+        //     }
+        //     if(carState == CAR_STATE_BACKWARD_RAMP){
+        //         return 0;
+        //     }
+        // }
+        // hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+    }else{
+
+        if(prevSpeed != 0){
+            carState = CAR_STATE_OFF;
+            set_mode(pigPio, MOTOR_ENABLE, PI_INPUT);
+            set_mode(pigPio, MOTOR_P, PI_INPUT);
+            set_mode(pigPio, MOTOR_M, PI_INPUT);
+            // gpio_write(pigPio, MOTOR_P, 0);
+            // gpio_write(pigPio, MOTOR_M, 0);
+            // gpio_write(pigPio, MOTOR_ENABLE, 0);
+        }
+
+    }
+
+    // ROS_WARN("Speed %lf %d", speedDouble, speed);
+    
+
+    // if((prevDir != reverse || abs(speed - prevSpeed) >= SPEED_DIFF) || !speed){
+    //     if(prevSpeed == 0 && speed){
+    //         set_mode(pigPio, MOTOR_ENABLE, PI_OUTPUT);
+    //         set_mode(pigPio, MOTOR_P, PI_OUTPUT);
+    //         set_mode(pigPio, MOTOR_M, PI_OUTPUT);
+    //     }
+    //     if(prevSpeed != 0 && speed == 0){
+    //         carState = 0;
+    //         set_mode(pigPio, MOTOR_ENABLE, PI_INPUT);
+    //         set_mode(pigPio, MOTOR_P, PI_INPUT);
+    //         set_mode(pigPio, MOTOR_M, PI_INPUT);
+    //     }
+    //     if(speed){
+    //         gpio_write(pigPio, MOTOR_M, !reverse);
+    //         gpio_write(pigPio, MOTOR_P, reverse);
+    //         hardware_PWM(pigPio, MOTOR_ENABLE, FREQ_PWM, speed);
+    //     }
+    //     prevSpeed = speed;
+    //     prevDir = reverse;
+    // }
+    prevSpeed = speed;
 
     return 0;
 }

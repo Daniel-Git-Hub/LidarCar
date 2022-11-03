@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     car_init(pigPio);
     
     while (ros::ok()) {
+        car_update();
         ros::spinOnce();
     }    
     // ROS_INFO("-100\n");
