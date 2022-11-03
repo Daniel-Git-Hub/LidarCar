@@ -12,14 +12,14 @@
 #define MOTOR_M 20
 // #define MOTOR_IN_RANGE 255 //from -255 to 255
 
-#define MAX_SPEED_IN 0.22
-#define MIN_SPEED_IN -0.22
+#define MAX_SPEED_IN 0.75
+#define MIN_SPEED_IN -0.75
 // #define MIN_PWM      128
 #define MIN_PWM      550000
 #define MAX_PWM      750000
 #define ANGLE_BOOST_PWM  0
 // #define ANGLE_BOOST_PWM  200000
-#define FREQ_PWM     20
+#define FREQ_PWM     4
 
 #define SERVO_PIN 18
 #define SERVO_MID 1820
