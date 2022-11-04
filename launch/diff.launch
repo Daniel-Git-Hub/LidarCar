@@ -1,0 +1,7 @@
+
+<launch>
+
+	<include file="$(find lidarcar)/launch/diff_no_logic.launch"/>
+	
+	<include file="$(find lidarcar)/launch/diff_logic.launch"/>
+</launch>

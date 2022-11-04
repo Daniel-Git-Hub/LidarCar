@@ -15,8 +15,8 @@
 #define MAX_SPEED_IN 0.75
 #define MIN_SPEED_IN -0.75
 // #define MIN_PWM      128
-#define MIN_PWM          300000
-#define MAX_PWM          900000
+#define MIN_PWM          450000
+#define MAX_PWM          650000
 #define ANGLE_BOOST_PWM   50000
 // #define ANGLE_BOOST_PWM  200000
 #define FREQ_PWM     10
