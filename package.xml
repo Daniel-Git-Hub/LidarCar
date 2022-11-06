@@ -75,7 +75,6 @@
   <depend>navigation </depend>
   <!-- <exec_depend>tf</exec_depend> -->
   <depend>rplidar_ros</depend>
-  <depend>laser_scan_matcher</depend>
   <depend>sensor_msgs</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
